@@ -185,17 +185,17 @@ class HRModule(BaseModule):
         if self.num_branches == 1:
             return [self.branches[0](x[0])]
 
-        for i in range(self.num_branches):
+        for i in range(self.num_branches):             # 有多个分支(不同尺度)的情况
             x[i] = self.branches[i](x[i])
 
         x_fuse = []
         for i in range(len(self.fuse_layers)):
             y = 0
             for j in range(self.num_branches):
-                if i == j:
+                if i == j:                             # 加上这个尺度自己
                     y += x[j]
                 else:
-                    y += self.fuse_layers[i][j](x[j])
+                    y += self.fuse_layers[i][j](x[j])  # 加上来自别的尺度的特征
             x_fuse.append(self.relu(y))
         return x_fuse
 
@@ -213,9 +213,9 @@ class HRNet(BaseModule):
             5 keys:
 
                 - num_modules(int): The number of HRModule in this stage.
-                - num_branches(int): The number of branches in the HRModule.
+                - num_branches(int): The number of branches in the HRModule.  # 指的是不同分辨率, 每个分辨率一个branch
                 - block(str): The type of convolution block.
-                - num_blocks(tuple): The number of blocks in each branch.
+                - num_blocks(tuple): The number of blocks in each branch.     # 每个branch不同的block数
                     The length must be equal to num_branches.
                 - num_channels(tuple): The number of channels in each branch.
                     The length must be equal to num_branches.
@@ -225,7 +225,7 @@ class HRNet(BaseModule):
         norm_eval (bool): Whether to set norm layers to eval mode, namely,
             freeze running stats (mean and var). Note: Effect on Batch Norm
             and its variants only. Default: True.
-        with_cp (bool): Use checkpoint or not. Using checkpoint will save some
+        with_cp (bool): Use checkpoint or not. Using checkpoint will save some  
             memory while slowing down the training speed. Default: False.
         zero_init_residual (bool): Whether to use zero init for last norm layer
             in resblocks to let them behave as identity. Default: False.

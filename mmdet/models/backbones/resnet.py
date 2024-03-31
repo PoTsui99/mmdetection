@@ -69,7 +69,8 @@ class BasicBlock(BaseModule):
 
         def _inner_forward(x):
             identity = x
-
+            
+            # 经典CBA操作
             out = self.conv1(x)
             out = self.norm1(out)
             out = self.relu(out)
@@ -77,7 +78,7 @@ class BasicBlock(BaseModule):
             out = self.conv2(out)
             out = self.norm2(out)
 
-            if self.downsample is not None:
+            if self.downsample is not None:  # 卷积过程中降采样的话
                 identity = self.downsample(x)
 
             out += identity
